@@ -1,5 +1,3 @@
-
-
 import json
 import sys
 import requests
@@ -7,9 +5,6 @@ import requests
 BASE_URL = "http://localhost:5000"
 
 
-# ---------------------------------------------------------------------------
-# Helpers
-# ---------------------------------------------------------------------------
 
 def print_item(item):
     print(f"""
@@ -307,7 +302,7 @@ def main():
         if action:
             action()
         else:
-            print("  ❌  Invalid option. Please choose 0–7.")
+            print("    Invalid option. Please choose 0–7.")
 
 
 if __name__ == "__main__":
