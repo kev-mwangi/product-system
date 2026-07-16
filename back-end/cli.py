@@ -34,7 +34,7 @@ def safe_get(url, **kwargs):
     try:
         return requests.get(url, **kwargs, timeout=5)
     except requests.exceptions.ConnectionError:
-        print("\n❌  Could not connect. Is the Flask server running? (python app.py)")
+        print("\n Could not connect. Is the Flask server running? (python app.py)")
         sys.exit(1)
 
 
@@ -42,7 +42,7 @@ def safe_post(url, **kwargs):
     try:
         return requests.post(url, **kwargs, timeout=5)
     except requests.exceptions.ConnectionError:
-        print("\n❌  Could not connect. Is the Flask server running? (python app.py)")
+        print("\n Could not connect. Is the Flask server running? (python app.py)")
         sys.exit(1)
 
 
@@ -50,7 +50,7 @@ def safe_patch(url, **kwargs):
     try:
         return requests.patch(url, **kwargs, timeout=5)
     except requests.exceptions.ConnectionError:
-        print("\n❌  Could not connect. Is the Flask server running? (python app.py)")
+        print("\nCould not connect. Is the Flask server running? (python app.py)")
         sys.exit(1)
 
 
@@ -58,13 +58,11 @@ def safe_delete(url, **kwargs):
     try:
         return requests.delete(url, **kwargs, timeout=5)
     except requests.exceptions.ConnectionError:
-        print("\n❌  Could not connect. Is the Flask server running? (python app.py)")
+        print("\n Could not connect. Is the Flask server running? (python app.py)")
         sys.exit(1)
 
 
-# ---------------------------------------------------------------------------
-# Feature functions
-# ---------------------------------------------------------------------------
+
 
 def list_inventory():
     print_divider("All Inventory Items")
@@ -83,12 +81,12 @@ def view_item():
     try:
         item_id = int(input("  Enter item ID: ").strip())
     except ValueError:
-        print("  ❌  ID must be a number.")
+        print("    ID must be a number.")
         return
 
     res = safe_get(f"{BASE_URL}/inventory/{item_id}")
     if res.status_code == 404:
-        print(f"  ❌  {res.json()['error']}")
+        print(f"   {res.json()['error']}")
         return
     print_item(res.json())
 
@@ -103,7 +101,7 @@ def add_item():
         quantity = int(input("  Quantity : ").strip())
         price = float(input("  Price    : $").strip())
     except ValueError:
-        print("  ❌  Quantity must be an integer and price must be a number.")
+        print("    Quantity must be an integer and price must be a number.")
         return
 
     payload = {
@@ -116,10 +114,10 @@ def add_item():
     res = safe_post(f"{BASE_URL}/inventory", json=payload)
 
     if res.status_code == 201:
-        print("\n  ✅  Item added:")
+        print("\n   Item added:")
         print_item(res.json())
     else:
-        print(f"\n  ❌  Error: {res.json().get('error')}")
+        print(f"\n   Error: {res.json().get('error')}")
 
 
 def edit_item():
@@ -127,13 +125,13 @@ def edit_item():
     try:
         item_id = int(input("  Enter item ID to edit: ").strip())
     except ValueError:
-        print("  ❌  ID must be a number.")
+        print("   ID must be a number.")
         return
 
     # Show current values first
     res = safe_get(f"{BASE_URL}/inventory/{item_id}")
     if res.status_code == 404:
-        print(f"  ❌  {res.json()['error']}")
+        print(f"   {res.json()['error']}")
         return
     current = res.json()
     print("  Current values (press Enter to keep):")
@@ -158,14 +156,14 @@ def edit_item():
         try:
             updates["quantity"] = int(qty_str)
         except ValueError:
-            print("  ❌  Quantity must be an integer. Skipping.")
+            print("    Quantity must be an integer. Skipping.")
 
     price_str = input(f"  Price [${current['price']:.2f}]: $").strip()
     if price_str:
         try:
             updates["price"] = float(price_str)
         except ValueError:
-            print("  ❌  Price must be a number. Skipping.")
+            print("   Price must be a number. Skipping.")
 
     if not updates:
         print("  No changes made.")
@@ -173,10 +171,10 @@ def edit_item():
 
     res = safe_patch(f"{BASE_URL}/inventory/{item_id}", json=updates)
     if res.status_code == 200:
-        print("\n  ✅  Item updated:")
+        print("\n   Item updated:")
         print_item(res.json())
     else:
-        print(f"\n  ❌  Error: {res.json().get('error')}")
+        print(f"\n    Error: {res.json().get('error')}")
 
 
 def delete_item():
@@ -184,13 +182,13 @@ def delete_item():
     try:
         item_id = int(input("  Enter item ID to delete: ").strip())
     except ValueError:
-        print("  ❌  ID must be a number.")
+        print("   ID must be a number.")
         return
 
     # Confirm
     res = safe_get(f"{BASE_URL}/inventory/{item_id}")
     if res.status_code == 404:
-        print(f"  ❌  {res.json()['error']}")
+        print(f"   {res.json()['error']}")
         return
 
     item = res.json()
@@ -202,16 +200,16 @@ def delete_item():
 
     res = safe_delete(f"{BASE_URL}/inventory/{item_id}")
     if res.status_code == 204:
-        print("  ✅  Item deleted.")
+        print("   Item deleted.")
     else:
-        print(f"  ❌  Error: {res.text}")
+        print(f"   Error: {res.text}")
 
 
 def search_items():
     print_divider("Search Inventory")
     query = input("  Search by name: ").strip()
     if not query:
-        print("  ❌  Please enter a search term.")
+        print("    Please enter a search term.")
         return
 
     res = safe_get(f"{BASE_URL}/inventory/search", params={"name": query})
@@ -228,17 +226,17 @@ def lookup_barcode():
     print_divider("Lookup Barcode (OpenFoodFacts)")
     barcode = input("  Enter barcode: ").strip()
     if not barcode:
-        print("  ❌  Barcode cannot be empty.")
+        print("    Barcode cannot be empty.")
         return
 
-    print(f"  🔍  Fetching data for barcode {barcode}...")
+    print(f"    Fetching data for barcode {barcode}...")
     res = safe_get(f"{BASE_URL}/lookup/{barcode}")
 
     if res.status_code == 404:
-        print(f"  ❌  {res.json()['error']}")
+        print(f"    {res.json()['error']}")
         return
     if res.status_code != 200:
-        print(f"  ❌  Error: {res.json().get('error')}")
+        print(f"    Error: {res.json().get('error')}")
         return
 
     product = res.json()
@@ -259,7 +257,7 @@ def lookup_barcode():
         quantity = int(input("  Quantity: ").strip())
         price = float(input("  Price: $").strip())
     except ValueError:
-        print("  ❌  Invalid quantity or price.")
+        print("    Invalid quantity or price.")
         return
 
     res = safe_post(
@@ -267,20 +265,16 @@ def lookup_barcode():
         json={"quantity": quantity, "price": price},
     )
     if res.status_code == 201:
-        print("\n  ✅  Product imported:")
+        print("\n    Product imported:")
         print_item(res.json()["item"])
     else:
-        print(f"\n  ❌  Error: {res.json().get('error')}")
+        print(f"\n    Error: {res.json().get('error')}")
 
 
-# ---------------------------------------------------------------------------
-# Menu
-# ---------------------------------------------------------------------------
+
 
 MENU = """
-╔══════════════════════════════════════╗
-║     Inventory Management System     ║
-╚══════════════════════════════════════╝
+
   1. List all inventory
   2. View item by ID
   3. Add new item
@@ -316,5 +310,5 @@ def main():
             print("  ❌  Invalid option. Please choose 0–7.")
 
 
-if _name_ == "_main_":
+if __name__ == "__main__":
     main()

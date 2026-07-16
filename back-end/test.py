@@ -6,7 +6,7 @@ from unittest.mock import patch, MagicMock
 
 import sys
 import os
-sys.path.insert(0, os.path.dirname(os.path.dirname(_file_)))
+sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 import app as app_module
 from app import app, inventory, Item
@@ -68,9 +68,6 @@ class TestGetSingleItem:
         assert "error" in data
 
 
-# ---------------------------------------------------------------------------
-# POST /inventory
-# ---------------------------------------------------------------------------
 
 class TestCreateItem:
     def test_creates_item_successfully(self, client):
@@ -140,9 +137,7 @@ class TestCreateItem:
         assert d2["id"] == d1["id"] + 1
 
 
-# ---------------------------------------------------------------------------
-# PATCH /inventory/<id>
-# ---------------------------------------------------------------------------
+
 
 class TestUpdateItem:
     def test_updates_name(self, client):
@@ -177,9 +172,7 @@ class TestUpdateItem:
         assert res.status_code == 400
 
 
-# ---------------------------------------------------------------------------
-# DELETE /inventory/<id>
-# ---------------------------------------------------------------------------
+
 
 class TestDeleteItem:
     def test_delete_returns_204(self, client):
@@ -202,9 +195,6 @@ class TestDeleteItem:
         assert res.status_code == 404
 
 
-# ---------------------------------------------------------------------------
-# GET /inventory/search
-# ---------------------------------------------------------------------------
 
 class TestSearch:
     def test_finds_matching_items(self, client):
@@ -227,9 +217,7 @@ class TestSearch:
         assert res.status_code == 400
 
 
-# ---------------------------------------------------------------------------
-# GET /inventory/category/<category>
-# ---------------------------------------------------------------------------
+
 
 class TestCategoryFilter:
     def test_filters_by_category(self, client):
@@ -247,9 +235,7 @@ class TestCategoryFilter:
         assert res.get_json() == []
 
 
-# ---------------------------------------------------------------------------
-# GET /lookup/<barcode> — mocked external API
-# ---------------------------------------------------------------------------
+
 
 MOCK_OFF_RESPONSE = {
     "status": 1,
@@ -295,9 +281,7 @@ class TestLookupBarcode:
         assert res.status_code == 502
 
 
-# ---------------------------------------------------------------------------
-# POST /lookup/<barcode>/import — mocked external API
-# ---------------------------------------------------------------------------
+
 
 class TestImportBarcode:
     @patch("app.http_requests.get")
